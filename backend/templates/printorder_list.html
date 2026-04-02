@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Printorders | NexusPrint{% endblock %}
+{% block page_title %}Printorders{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search printorders...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Product Type</option>
+      <option value="business_cards" {% if status_filter == 'business_cards' %}selected{% endif %}>Business Cards</option>
+      <option value="banners" {% if status_filter == 'banners' %}selected{% endif %}>Banners</option>
+      <option value="brochures" {% if status_filter == 'brochures' %}selected{% endif %}>Brochures</option>
+      <option value="flyers" {% if status_filter == 'flyers' %}selected{% endif %}>Flyers</option>
+      <option value="stickers" {% if status_filter == 'stickers' %}selected{% endif %}>Stickers</option>
+      <option value="packaging" {% if status_filter == 'packaging' %}selected{% endif %}>Packaging</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/printorders/create/" class="btn btn-primary">+ New PrintOrder</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Order Number</th><th>Customer Name</th><th>Product Type</th><th>Quantity</th><th>Total</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/printorders/{{ r.pk }}/edit/"><strong>{{ r.order_number }}</strong></a></td>
+        <td>{{ r.customer_name|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_product_type_display }}</span></td>
+        <td>{{ r.quantity|default:"-" }}</td>
+        <td>{{ r.total|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/printorders/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/printorders/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No printorders found.</p>
+    <a href="/printorders/create/" class="btn btn-primary" style="margin-top:1rem">Create PrintOrder</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
