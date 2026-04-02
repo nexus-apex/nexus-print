@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusPrint{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Printorders</div>
+    <div class="stat-value">{{ printorder_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Printproducts</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ printproduct_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Printcustomers</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ printcustomer_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Total</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ printorder_total_total|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Printorders</h3>
+    <a href="/printorders/create/" class="btn btn-primary btn-sm">+ New PrintOrder</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Order Number</th><th>Customer Name</th><th>Product Type</th><th>Quantity</th><th>Total</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/printorders/{{ r.pk }}/edit/">{{ r.order_number }}</a></td>
+        <td>{{ r.customer_name|default:"-" }}</td><td><span class="badge badge-blue">{{ r.get_product_type_display }}</span></td><td>{{ r.quantity|default:"-" }}</td><td>{{ r.total|floatformat:2 }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/printorders/create/" class="btn btn-primary" style="margin-top:1rem">Create First PrintOrder</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
